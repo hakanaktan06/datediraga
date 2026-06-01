@@ -1,0 +1,428 @@
+/* Barbie Theme Core Styling */
+:root {
+    --barbie-pink-deep: #ff1493;
+    --barbie-pink-medium: #ff69b4;
+    --barbie-pink-light: #ffb6c1;
+    --barbie-pink-superlight: #fff0f5;
+    --gold-glitter: #ffd700;
+    --card-bg: rgba(255, 255, 255, 0.72);
+    --shadow-pink: rgba(255, 20, 147, 0.25);
+    --text-dark: #4a0e2e;
+    --text-muted: #8e4a72;
+    --transition-smooth: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: radial-gradient(circle at center, #ffe4e1 0%, #fff0f5 50%, #ffcbd5 100%);
+    background-size: 180% 180%;
+    animation: gradientShift 16s ease-in-out infinite alternate;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    color: var(--text-dark);
+    position: relative;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 50% 100%; }
+}
+
+/* Background floating elements */
+#particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-particle {
+    position: absolute;
+    bottom: -50px;
+    pointer-events: none;
+    will-change: transform, opacity;
+    opacity: 0;
+    filter: blur(0.5px);
+    animation: floatUp 20s ease-in-out infinite;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.6);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.25;
+    }
+    50% {
+        transform: translateY(-55vh) translateX(25px) rotate(90deg) scale(0.85);
+        opacity: 0.35;
+    }
+    85% {
+        opacity: 0.25;
+    }
+    100% {
+        transform: translateY(-115vh) translateX(-15px) rotate(180deg) scale(0.6);
+        opacity: 0;
+    }
+}
+
+/* Container & Layout */
+.container {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid rgba(255, 105, 180, 0.35);
+    border-radius: 28px;
+    box-shadow: 0 15px 35px var(--shadow-pink), 0 5px 15px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    animation: cardGlow 5s ease-in-out infinite alternate;
+}
+
+@keyframes cardGlow {
+    0% {
+        box-shadow: 0 15px 35px var(--shadow-pink), 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-color: rgba(255, 105, 180, 0.35);
+    }
+    100% {
+        box-shadow: 0 15px 45px rgba(255, 20, 147, 0.35), 0 0 18px rgba(255, 105, 180, 0.4), 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-color: rgba(255, 20, 147, 0.55);
+    }
+}
+
+.card.hidden {
+    opacity: 0;
+    transform: scale(0.9) translateY(30px);
+    pointer-events: none;
+    position: absolute;
+    display: none;
+}
+
+.card-content {
+    padding: 35px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Sparkle Animations */
+.sparkle {
+    position: absolute;
+    color: var(--gold-glitter);
+    opacity: 0.8;
+    animation: sparklePulse 3s ease-in-out infinite;
+}
+
+.sparkle-1 {
+    top: 20px;
+    left: 20px;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    bottom: 20px;
+    right: 20px;
+    animation-delay: 1.5s;
+}
+
+@keyframes sparklePulse {
+    0%, 100% { transform: scale(0.8) rotate(0deg); opacity: 0.4; }
+    50% { transform: scale(1.2) rotate(15deg); opacity: 1; filter: drop-shadow(0 0 5px var(--gold-glitter)); }
+}
+
+/* Proposal Image Styles */
+.image-wrapper {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--barbie-pink-medium);
+    box-shadow: 0 8px 20px var(--shadow-pink);
+    margin-bottom: 25px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.proposal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.celebration-image-wrapper {
+    background: radial-gradient(circle, #fff 40%, var(--barbie-pink-superlight) 100%);
+    border-color: var(--barbie-pink-deep);
+}
+
+.celebration-heart {
+    color: var(--barbie-pink-deep);
+    animation: heartbeat 1.2s infinite alternate;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--barbie-pink-deep)); }
+    100% { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--barbie-pink-deep)); }
+}
+
+/* Titles & Text */
+.title {
+    font-family: 'Pacifico', cursive;
+    color: var(--barbie-pink-deep);
+    font-size: 1.85rem;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    text-shadow: 1px 1px 2px rgba(255, 20, 147, 0.15);
+}
+
+.acceptance-title {
+    font-size: 1.65rem;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* Button Layout & Base Styles */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 15px;
+    min-height: 60px;
+    position: relative;
+}
+
+.btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Yes Button Style */
+.btn-yes {
+    background: linear-gradient(135deg, var(--barbie-pink-medium) 0%, var(--barbie-pink-deep) 100%);
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(255, 20, 147, 0.35);
+}
+
+.btn-yes:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(255, 20, 147, 0.45);
+}
+
+.btn-yes:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* Escape No Button Style */
+.btn-no {
+    background: #fff;
+    color: var(--barbie-pink-deep);
+    border: 2px solid var(--barbie-pink-light);
+    transition: transform 0.15s ease, opacity 0.15s ease; /* Faster transitions for smooth runaway */
+}
+
+/* Used in JS for teleport placement */
+.btn-no.absolute-mode {
+    position: fixed;
+    z-index: 1000;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Date Scheduler Form Styling */
+.date-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.label-icon {
+    color: var(--barbie-pink-medium);
+}
+
+.form-input {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    border: 2px solid var(--barbie-pink-light);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-dark);
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.form-input:focus {
+    border-color: var(--barbie-pink-deep);
+    box-shadow: 0 0 0 3px rgba(255, 20, 147, 0.15);
+}
+
+/* Activity Option Radio Grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.option-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.option-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 105, 180, 0.15);
+    border-radius: 16px;
+    transition: var(--transition-smooth);
+    text-align: center;
+    min-height: 96px;
+}
+
+.option-content svg {
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+}
+
+.option-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Selected state for radio cards */
+.option-card input[type="radio"]:checked + .option-content {
+    border-color: var(--barbie-pink-deep);
+    background: rgba(255, 20, 147, 0.04);
+    box-shadow: 0 4px 12px rgba(255, 20, 147, 0.12);
+    transform: translateY(-2px);
+}
+
+.option-card input[type="radio"]:checked + .option-content svg {
+    color: var(--barbie-pink-deep);
+    transform: scale(1.1);
+}
+
+/* Submit Plan Button */
+.btn-submit {
+    background: linear-gradient(135deg, var(--barbie-pink-medium) 0%, var(--barbie-pink-deep) 100%);
+    color: #fff;
+    width: 100%;
+    margin-top: 10px;
+    box-shadow: 0 6px 15px rgba(255, 20, 147, 0.3);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 20, 147, 0.4);
+}
+
+/* Confetti Canvas overlay */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    .card-content {
+        padding: 25px 15px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 12px;
+        min-height: 120px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+}

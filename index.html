@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benimle Date'e Çıkar Mısın?</title>
+    <meta name="description" content="Özel bir date teklifi ve buluşma planlayıcısı.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Floating Background Particles Container -->
+    <div id="particles-container"></div>
+
+    <div class="container">
+        <!-- Main Proposal Card -->
+        <main class="card" id="proposal-card">
+            <div class="card-content">
+                <!-- Sparkle SVG Top Left -->
+                <div class="sparkle sparkle-1">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>
+                </div>
+                <!-- Sparkle SVG Bottom Right -->
+                <div class="sparkle sparkle-2">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>
+                </div>
+
+                <div class="image-wrapper">
+                    <!-- Loaded dynamically via JS or copied local asset -->
+                    <img id="proposal-image" src="assets/barbie_couple.png" alt="Barbie Tarzı İllüstrasyon" class="proposal-img">
+                </div>
+
+                <h1 id="proposal-title" class="title">Gülom, benimle date'e çıkar mısın?</h1>
+
+                <div class="btn-group" id="btn-group">
+                    <button type="button" id="yes-btn" class="btn btn-yes">
+                        <span class="btn-text">Evet</span>
+                        <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                    <button type="button" id="no-btn" class="btn btn-no">
+                        <span class="btn-text">Hayır</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Acceptance & Date Scheduler Card (Initially Hidden) -->
+        <section class="card hidden" id="scheduler-card">
+            <div class="card-content">
+                <!-- Sparkle SVG -->
+                <div class="sparkle sparkle-1">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/></svg>
+                </div>
+
+                <div class="image-wrapper celebration-image-wrapper">
+                    <!-- Celebration graphic / heart SVG container -->
+                    <svg class="celebration-heart" viewBox="0 0 24 24" width="80" height="80" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+
+                <h2 class="title acceptance-title">Söz verdin, artık geri dönüş yok!</h2>
+                <p class="subtitle">Harika bir gün planlayalım. Detayları seçip bana iletebilirsin.</p>
+
+                <form id="date-form" class="date-form">
+                    <div class="form-group">
+                        <label for="date-input" class="form-label">
+                            <svg class="label-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Buluşma Günü
+                        </label>
+                        <input type="date" id="date-input" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <svg class="label-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Ne Yapmak İstersin?
+                        </label>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="activity" value="Kahve ve Sohbet" checked>
+                                <span class="option-content">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                                    <span class="option-text">Kahve & Sohbet</span>
+                                </span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="activity" value="Şık Bir Akşam Yemeği">
+                                <span class="option-content">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><circle cx="12" cy="12" r="10"/></svg>
+                                    <!-- A custom food plate icon layout -->
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M18 10l-2-4M18 10l2-4M6 20V4M6 4l2 3M6 4L4 7M12 22a8 8 0 0 0 8-8h-16a8 8 0 0 0 8 8z"/></svg>
+                                    <span class="option-text">Akşam Yemeği</span>
+                                </span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="activity" value="Sushi Keyfi">
+                                <span class="option-content">
+                                    <!-- Chopsticks / Sushi bowl concept -->
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9z"/><path d="M19 13l-4-9M17 13L13 4"/></svg>
+                                    <span class="option-text">Sushi Keyfi</span>
+                                </span>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="activity" value="Sinema ve Mısır">
+                                <span class="option-content">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                                    <span class="option-text">Sinema</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit">
+                        <span class="btn-text">Buluşma Planını Gönder</span>
+                        <svg class="btn-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <!-- Canvas Confetti Container or JS sparkles -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="app.js"></script>
+</body>
+</html>
