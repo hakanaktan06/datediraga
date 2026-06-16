@@ -1,10 +1,18 @@
 // DOM Elements
 const proposalCard = document.getElementById('proposal-card');
 const schedulerCard = document.getElementById('scheduler-card');
+const countdownCard = document.getElementById('countdown-card');
 const yesBtn = document.getElementById('yes-btn');
 const noBtn = document.getElementById('no-btn');
 const dateInput = document.getElementById('date-input');
 const dateForm = document.getElementById('date-form');
+const placeInput = document.getElementById('place-input');
+const customActivityRadio = document.getElementById('custom-activity-radio');
+const customActivityInput = document.getElementById('custom-activity-input');
+const resendBtn = document.getElementById('resend-btn');
+const soundToggle = document.getElementById('sound-toggle');
+const soundOnIcon = document.getElementById('sound-on-icon');
+const soundOffIcon = document.getElementById('sound-off-icon');
 const particlesContainer = document.getElementById('particles-container');
 const canvas = document.getElementById('confetti-canvas');
 const ctx = canvas.getContext('2d');
@@ -13,6 +21,28 @@ const ctx = canvas.getContext('2d');
 let yesScale = 1.0;
 const maxYesScale = 2.5;
 let noClickCount = 0;
+let lastWhatsappUrl = '';
+
+// --- Personalization via URL params ---
+// Usage: index.html?name=Ayşe&img=https://...&q=Benimle...
+(function applyPersonalization() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    const img = params.get('img');
+    const customQuestion = params.get('q');
+
+    const titleEl = document.getElementById('proposal-title');
+    if (customQuestion) {
+        titleEl.textContent = customQuestion;
+    } else if (name) {
+        titleEl.textContent = `${name}, benimle date'e çıkar mısın?`;
+    }
+
+    if (img) {
+        const imgEl = document.getElementById('proposal-image');
+        imgEl.src = img;
+    }
+})();
 
 // Escape messages for the No button (Emoji-free)
 const messages = [
@@ -94,6 +124,68 @@ for (let i = 0; i < 6; i++) {
 setInterval(spawnParticle, 1800);
 
 
+// --- Sound Effects (Web Audio API, no external assets) ---
+let soundEnabled = true;
+let audioCtx = null;
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+// Play a single tone with a soft envelope
+function playTone(freq, startTime, duration, type = 'sine', volume = 0.15) {
+    const ac = getAudioCtx();
+    if (!ac) return;
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+}
+
+// Soft blip when the No button escapes
+function playBlip() {
+    if (!soundEnabled) return;
+    const ac = getAudioCtx();
+    if (!ac) return;
+    playTone(420 + Math.random() * 80, ac.currentTime, 0.12, 'triangle', 0.08);
+}
+
+// Happy ascending arpeggio when Yes is pressed
+function playCelebration() {
+    if (!soundEnabled) return;
+    const ac = getAudioCtx();
+    if (!ac) return;
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+    notes.forEach((f, i) => {
+        playTone(f, ac.currentTime + i * 0.12, 0.35, 'sine', 0.18);
+    });
+    // sparkle on top
+    playTone(1318.5, ac.currentTime + 0.5, 0.5, 'triangle', 0.1);
+}
+
+// Sound toggle button
+soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    soundOnIcon.classList.toggle('hidden-soft', !soundEnabled);
+    soundOffIcon.classList.toggle('hidden-soft', soundEnabled);
+    if (soundEnabled) playBlip();
+});
+
+
 // Runaway "No" Button Functionality
 function moveNoButton(e) {
     // Switch to absolute positioning after first hover/touch
@@ -101,6 +193,7 @@ function moveNoButton(e) {
         noBtn.classList.add('absolute-mode');
         document.body.appendChild(noBtn);
     }
+    playBlip();
 
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -165,21 +258,66 @@ noBtn.addEventListener('click', (e) => {
     moveNoButton(e);
 });
 
+// Proximity dodge: once the No button is free-floating, flee whenever the
+// pointer/finger gets close — so it can never actually be caught.
+function proximityDodge(e) {
+    if (!noBtn.isConnected || !noBtn.classList.contains('absolute-mode')) return;
+
+    let px, py;
+    if (e.touches && e.touches[0]) {
+        px = e.touches[0].clientX;
+        py = e.touches[0].clientY;
+    } else {
+        px = e.clientX;
+        py = e.clientY;
+    }
+    if (px === undefined) return;
+
+    const rect = noBtn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const distance = Math.hypot(px - cx, py - cy);
+
+    if (distance < 120) {
+        moveNoButton(e);
+    }
+}
+
+document.addEventListener('mousemove', proximityDodge);
+document.addEventListener('touchmove', (e) => {
+    if (noBtn.isConnected && noBtn.classList.contains('absolute-mode')) e.preventDefault();
+    proximityDodge(e);
+}, { passive: false });
+
 
 // Yes Button Click Action - Switch Card & Start Confetti
 yesBtn.addEventListener('click', () => {
+    playCelebration();
+
     // Hide proposal
     proposalCard.classList.add('hidden');
-    
+
     // Remove the runaway No button from the DOM
     noBtn.remove();
-    
+
     // Wait for the transition of hiding, then show scheduler
     setTimeout(() => {
         proposalCard.style.display = 'none';
         schedulerCard.classList.remove('hidden');
         startConfetti();
     }, 400);
+});
+
+
+// Show/hide the custom activity text field based on radio selection
+document.querySelectorAll('input[name="activity"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+        const isCustom = customActivityRadio.checked;
+        customActivityInput.classList.toggle('hidden-soft', !isCustom);
+        if (isCustom) {
+            customActivityInput.focus();
+        }
+    });
 });
 
 
@@ -298,11 +436,24 @@ function animateConfetti() {
 // Form Submission & WhatsApp Redirect
 dateForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     const chosenDate = dateInput.value;
     const selectedActivityElement = document.querySelector('input[name="activity"]:checked');
-    const chosenActivity = selectedActivityElement ? selectedActivityElement.value : "Buluşma";
-    
+    let chosenActivity = selectedActivityElement ? selectedActivityElement.value : "Buluşma";
+
+    // Resolve custom activity text
+    if (chosenActivity === '__custom__') {
+        const custom = customActivityInput.value.trim();
+        if (!custom) {
+            customActivityInput.classList.remove('hidden-soft');
+            customActivityInput.focus();
+            return;
+        }
+        chosenActivity = custom;
+    }
+
+    const chosenPlace = placeInput.value.trim();
+
     // Format date nicely (DD.MM.YYYY)
     let formattedDate = chosenDate;
     if (chosenDate) {
@@ -313,10 +464,80 @@ dateForm.addEventListener('submit', (e) => {
     }
 
     // Build the template message without emojis
-    const message = `Harika haber! Date teklifini kabul ettim. Buluşma planımız şu şekilde: \n\nTarih: ${formattedDate} \nPlan: ${chosenActivity} \n\nSözleştiğimiz gibi orada olacağım!`;
+    let message = `Harika haber! Date teklifini kabul ettim. Buluşma planımız şu şekilde: \n\nTarih: ${formattedDate} \nPlan: ${chosenActivity}`;
+    if (chosenPlace) {
+        message += ` \nYer: ${chosenPlace}`;
+    }
+    message += ` \n\nSözleştiğimiz gibi orada olacağım!`;
     const encodedMessage = encodeURIComponent(message);
-    
+
     // Open WhatsApp URL (without phone number to open contact chooser)
-    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    lastWhatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+    window.open(lastWhatsappUrl, '_blank');
+
+    // Transition to the countdown card
+    startCountdown(chosenDate, chosenActivity, chosenPlace, formattedDate);
 });
+
+// Re-open WhatsApp from the countdown screen
+resendBtn.addEventListener('click', () => {
+    if (lastWhatsappUrl) window.open(lastWhatsappUrl, '_blank');
+});
+
+
+// --- Countdown to the date ---
+let countdownInterval = null;
+
+function startCountdown(isoDate, activity, place, formattedDate) {
+    // Fill plan summary
+    const planEl = document.getElementById('countdown-plan');
+    let planHtml = `<strong>${formattedDate}</strong> &middot; ${escapeHtml(activity)}`;
+    if (place) planHtml += `<br><span class="countdown-place">${escapeHtml(place)}</span>`;
+    planEl.innerHTML = planHtml;
+
+    // Target time: chosen date at 19:00 by default
+    const target = new Date(`${isoDate}T19:00:00`);
+
+    function tick() {
+        const now = new Date();
+        let diff = Math.floor((target - now) / 1000);
+
+        const summaryEl = document.getElementById('countdown-summary');
+        if (diff <= 0) {
+            ['cd-days', 'cd-hours', 'cd-mins', 'cd-secs'].forEach((id) => {
+                document.getElementById(id).textContent = '0';
+            });
+            summaryEl.textContent = 'Buluşma zamanı geldi! İyi eğlenceler.';
+            clearInterval(countdownInterval);
+            return;
+        }
+
+        const days = Math.floor(diff / 86400); diff -= days * 86400;
+        const hours = Math.floor(diff / 3600); diff -= hours * 3600;
+        const mins = Math.floor(diff / 60);
+        const secs = diff - mins * 60;
+
+        document.getElementById('cd-days').textContent = days;
+        document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+        document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+    }
+
+    tick();
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(tick, 1000);
+
+    // Swap cards
+    schedulerCard.classList.add('hidden');
+    setTimeout(() => {
+        schedulerCard.style.display = 'none';
+        countdownCard.classList.remove('hidden');
+    }, 400);
+}
+
+// Small helper to avoid injecting markup from free-text inputs
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}

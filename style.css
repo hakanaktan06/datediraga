@@ -395,6 +395,109 @@ body {
     box-shadow: 0 8px 20px rgba(255, 20, 147, 0.4);
 }
 
+/* Generic soft hide toggle (keeps layout simple) */
+.hidden-soft {
+    display: none !important;
+}
+
+/* Custom activity text input */
+.custom-activity-input {
+    margin-top: 12px;
+    animation: fadeSlide 0.3s ease;
+}
+
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.optional-tag {
+    text-transform: none;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0;
+}
+
+/* Sound toggle button */
+.sound-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1100;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 105, 180, 0.4);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--barbie-pink-deep);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--shadow-pink);
+    transition: var(--transition-smooth);
+}
+
+.sound-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px var(--shadow-pink);
+}
+
+/* Countdown display */
+.countdown {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin: 5px 0 20px;
+}
+
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 60px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid rgba(255, 105, 180, 0.2);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(255, 20, 147, 0.1);
+}
+
+.countdown-value {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--barbie-pink-deep);
+}
+
+.countdown-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.countdown-plan {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+.countdown-plan strong {
+    color: var(--barbie-pink-deep);
+}
+
+.countdown-place {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
 /* Confetti Canvas overlay */
 #confetti-canvas {
     position: fixed;
@@ -424,5 +527,19 @@ body {
 
     .options-grid {
         grid-template-columns: 1fr;
+    }
+
+    .countdown {
+        gap: 6px;
+    }
+
+    .countdown-unit {
+        min-width: 0;
+        flex: 1;
+        padding: 10px 4px;
+    }
+
+    .countdown-value {
+        font-size: 1.3rem;
     }
 }
